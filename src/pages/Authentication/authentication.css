@@ -1,0 +1,10 @@
+.logInModeContainer{
+margin-top: 25px;
+}
+.logInModeContainer form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 25vh;
+}
