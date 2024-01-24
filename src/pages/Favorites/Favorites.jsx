@@ -2,10 +2,12 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import db from "../../config/firebase";
 import StockCard from "../../Components/StockCard";
+import { useLocation } from "react-router-dom";
 
 function Favorites(props) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+ 
 
   const fetchDataWithQuery = async () => {
     const data = [...props.cryptoData];
@@ -57,7 +59,7 @@ function Favorites(props) {
       {favorites.length === 0 ? <p>You have no favorites saved up</p> : null}
       <button onClick={() => console.log(favorites)}>testclick</button>
       {favorites.map((item) => (
-        <StockCard singleCryptoData={item} />
+        <StockCard location={false} singleCryptoData={item} />
       ))}
     </div>
   );

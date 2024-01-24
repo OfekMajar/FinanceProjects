@@ -16,7 +16,7 @@ import {getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 function App() {
   const [cryptoData, setCryptoData] = useState([{}]);
   const [user,setUser]=useState()
-  
+  const [favCryptos,setFavCryptos]=useState()
   const baseUrl = `https://api.coincap.io/v2/assets`;
  
   function fetchData() {
@@ -75,7 +75,7 @@ function App() {
           <Route path="/" element={<HomePage user={user} />} />
          {user?<Route path="/Authentication" element={<div id="errorPage"> <h1>whoops you are not supposed to be here <br /> you are already logged in</h1> </div>}/>:<Route path="/Authentication" element={<Authentication user={user} setUser={setUser} />} />} 
           <Route path="/Favorites" element={<Favorites cryptoData={cryptoData} user={user} />} />
-          <Route path="/Stocks" element={<div id="stocksPageContainer"><Stocks user={user}  cryptoData={cryptoData}/> </div> }/>
+          <Route path="/Stocks" element={<div id="stocksPageContainer"><Stocks favCryptos={favCryptos} setFavCryptos={setFavCryptos} user={user}  cryptoData={cryptoData}/> </div> }/>
           <Route path="/CryptoToken" element={<div> err</div>}/>
           <Route path="/CryptoToken/:CryptoId" element={<div id="stockSinglePageContainer"><SinglePage /></div> }/>
         </Routes>
