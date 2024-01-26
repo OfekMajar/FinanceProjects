@@ -1,29 +1,24 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import firebase from "./config/firebase";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Authentication from "./pages/Authentication/Authentication";
 import Favorites from "./pages/Favorites/Favorites";
-import HomePage from "./pages/Home/HomePage";
-import Stocks from "./pages/Stocks/Stocks"
-import NavBar from "./Components/NavBar/NavBar";
+import Stocks from "./pages/Home/Stocks";
 import Header from "./Components/Header/Header";
 import SinglePage from "./pages/SinglePage/SinglePage";
-import {getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import db from "./config/firebase";
 function App() {
   const [cryptoData, setCryptoData] = useState([{}]);
-  const [user,setUser]=useState()
-  const [favCryptos,setFavCryptos]=useState()
+  const [user, setUser] = useState();
+  const [favCryptos, setFavCryptos] = useState([]);
   const baseUrl = `https://api.coincap.io/v2/assets`;
- 
   function fetchData() {
     fetch(baseUrl)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.data);
         setCryptoData(data.data);
       })
       .catch((err) => {
@@ -31,53 +26,123 @@ function App() {
       });
   }
 
-  useEffect
+  const fetchDataWithQuery = async () => {
+    const data = [...cryptoData];
+    const collectionRef = collection(db, "Favorites");
+    const q = query(collectionRef, where("userId", "==", user.uid));
+
+    try {
+      const querySnapshot = await getDocs(q);
+      const desiredIds = [];
+      querySnapshot.forEach((doc) => {
+        desiredIds.push(doc.data().id);
+      });
+      const filteredData = data.filter((item) => desiredIds.includes(item.id));
+      setFavCryptos([...filteredData]);
+    } catch (error) {
+      console.error("Error getting documents: ", error);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    const fetchFav = async () => {
+      // Check if the user is authenticated
+      if (user && user.uid) {
+        try {
+          await fetchDataWithQuery();
+        } catch (error) {
+          console.error("Error fetching data: ", error);
+        } finally {
+        }
+      } else {
+      }
+    };
+
+    fetchFav();
+  }, [user]);
+
+  useEffect(() => {});
   useEffect(() => {
     fetchData();
 
     onAuthStateChanged(getAuth(), (onlineUser) => {
       if (onlineUser) {
-        console.log("user is ",onlineUser);
-        setUser(onlineUser)
+        setUser(onlineUser);
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
-        
       } else {
-        console.log("user outtt");
-        setUser(null)
+        setUser();
         // User is signed out
         // ...
       }
-      
     });
   }, [user]);
-  const logOut = (e)=>{//lets the user to log out
-    e.preventDefault()
-    const auth = getAuth();
-    signOut(auth).then(() => {
-      console.log("Sign-out successful.");
-    }).catch((error) => {
-      // An error happened.
-      console.log(`failed to sign out  ${error}`);
-    });
-  }
-  
+
+
   return (
     <>
-      
       <BrowserRouter>
         <div id="headerContainer">
-      {user?<p id="headerUserName">{user.displayName} <button onClick={logOut}> LogOut</button></p>:<p id="headerUserName">guest <Link to="/Authentication"><button >Login</button></Link> </p>}
-          
-          <Header user={user}/>
+          <Header user={user} />
         </div>
         <Routes>
-          <Route path="/" element={<HomePage user={user} />} />
-         {user?<Route path="/Authentication" element={<div id="errorPage"> <h1>whoops you are not supposed to be here <br /> you are already logged in</h1> </div>}/>:<Route path="/Authentication" element={<Authentication user={user} setUser={setUser} />} />} 
-          <Route path="/Favorites" element={<Favorites cryptoData={cryptoData} user={user} />} />
-          <Route path="/Stocks" element={<div id="stocksPageContainer"><Stocks favCryptos={favCryptos} setFavCryptos={setFavCryptos} user={user}  cryptoData={cryptoData}/> </div> }/>
-          <Route path="/CryptoToken" element={<div> err</div>}/>
-          <Route path="/CryptoToken/:CryptoId" element={<div id="stockSinglePageContainer"><SinglePage /></div> }/>
+          {user ? (
+            <Route
+              path="/Authentication"
+              element={
+                <div id="errorPage">
+                  {" "}
+                  <h1>
+                    whoops you are not supposed to be here <br /> you are
+                    already logged in
+                  </h1>{" "}
+                </div>
+              }
+            />
+          ) : (
+            <Route
+              path="/Authentication"
+              element={<Authentication user={user} setUser={setUser} />}
+            />
+          )}
+          <Route
+            path="/Favorites"
+            element={
+              <div id="favoritesPageContainer">
+                {" "}
+                <Favorites
+                  fetchDataWithQuery={fetchDataWithQuery}
+                  cryptoData={cryptoData}
+                  favCryptos={favCryptos}
+                  user={user}
+                />
+              </div>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <div id="stocksPageContainer">
+                <Stocks
+                  fetchDataWithQuery={fetchDataWithQuery}
+                  favCryptos={favCryptos}
+                  setFavCryptos={setFavCryptos}
+                  user={user}
+                  cryptoData={cryptoData}
+                />{" "}
+              </div>
+            }
+          />
+          <Route path="/CryptoToken" element={<div> err</div>} />
+          <Route
+            path="/CryptoToken/:CryptoId"
+            element={
+              <div id="stockSinglePageContainer">
+                <SinglePage />
+              </div>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

@@ -5,12 +5,12 @@ function SignIn(props) {
     <div className='logInModeContainer'>
      <form onSubmit={props.signIn}>
         <label htmlFor="userEmailInput">Email:</label>
-        <input onChange={props.changeHandler}  type="email" name='userEmail' id='userEmailInput'/>
+        <input onChange={props.changeHandler}  type="email" name='userEmail' id='userEmailInput' required/>
         <label htmlFor="userPasswordInput">Password:</label>
-        <input onChange={props.changeHandler} type="password" name='userPassword' id='userPasswordInput'/>
+        <input onChange={props.changeHandler} type="password" name='userPassword' id='userPasswordInput' required/>
         <button type='sumbit'>Sign in</button>
      </form>
-     <button type='button' onClick={props.toggleMode}>don't have an account click here</button>
+     <button className='switchSignUpLogInBtn' type='button' onClick={props.toggleMode}>don't have an account click here</button>
     </div>
   )
 }

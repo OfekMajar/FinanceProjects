@@ -6,7 +6,6 @@ function NavBar(props) {
     <nav>
       <Link to="/">Home</Link>
       <Link to="/Favorites">Favorites</Link>
-      <Link to="/Stocks">Stocks</Link>
 
     </nav>
   );

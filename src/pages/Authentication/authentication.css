@@ -1,10 +1,39 @@
-.logInModeContainer{
-margin-top: 25px;
+.logInModeContainer {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin: 10px;
+  width: 300px;
+  text-align: center;
 }
-.logInModeContainer form{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    height: 25vh;
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 80%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+#authFormContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 10vh;
+  align-items: center;
+}
+.switchSignUpLogInBtn {
+  margin-top: 5px;
 }

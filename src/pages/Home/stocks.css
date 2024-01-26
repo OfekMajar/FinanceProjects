@@ -62,16 +62,24 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #ff0000; /* You can change the color to fit your design */
+    color: #ff0000;
     font-size: 1.5em;
   }
   
   .favoriteBtn:hover {
     transform: scale(1.2);
     animation: heartBeat 1s infinite alternate;
-    color: #ff6666; /* Change the hover color */
+    color: #ff6666; 
   }
   
+  .disabledBtn{
+    color: grey;
+  }
+  .disabledBtn:hover {
+    transform: scale(1);
+    animation: none;
+    color: grey; 
+  }
   @keyframes heartBeat {
   from{
     transform: scale(1);

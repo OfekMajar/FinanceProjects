@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import db from '../config/firebase';
 function StockCard(props) {
   const [isFavorite,setIsFavorite]=useState(false)
-
+ 
   const checkIfInFav= async()=>{
     const collectionRef=collection(db,"Favorites")
     const q = query(collectionRef,where("userId","==",props.userId),where("id","==",props.singleCryptoData.id))
@@ -39,7 +39,8 @@ checkIfInFav()
     <button className="seeMoreBtn" name={props.singleCryptoData.id} onClick={goToSinglePage}>
       See More
     </button>
-    {props.location?<i  className={`fa-${isFavorite ? 'solid' : 'regular'} fa-heart favoriteBtn`} onClick={(e)=> {  props.addToFavorites(e,props.singleCryptoData)}}></i>:null}
+    {props.userId.uid=="guest"?<div>{props.location?<i title="Must login to add to favorites"  className={`fa-solid fa-heart favoriteBtn disabledBtn`}  onClick={(e)=> {  alert("to save you need to login")}}></i>:null}</div>:<div>{props.location?<i title={`${isFavorite?"Remove from favorites":"Add to favorites"}`} className={`fa-${isFavorite ? 'solid' : 'regular'} fa-heart favoriteBtn`}  onClick={(e)=> {  props.addToFavorites(e,props.singleCryptoData)}}></i>:null}</div>}
+    
     
     
   </div>

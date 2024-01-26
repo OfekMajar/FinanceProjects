@@ -60,12 +60,12 @@ function Authentication(props) {
     const auth = getAuth();
     signInWithEmailAndPassword(auth,tempUser.userEmail, tempUser.userPassword)
       .then( async (userCredential) => {
+        navigate('/')
         const user = userCredential.user;
         const docRef= doc(db,"users",user.uid)
-        const docData= await getDoc(docRef)
-        console.log(docData.data());
-        props.setUser({...docData.data(), uid:docData.id});
-        navigate('/')
+       await getDoc(docRef)
+       
+       
 
       })
       .catch((error) => {
@@ -79,11 +79,9 @@ function Authentication(props) {
 
 
 
-  return <div>
-{props.user? <div>
-  <button onClick={logOut}>Log out</button>
-</div>:<div >{isLoginMode?<SignIn toggleMode={toggleMode} signIn={signIn} changeHandler={changeHandler}/>:<SignUp toggleMode={toggleMode} signUp={signUp} changeHandler={changeHandler}/>} </div>}
-  </div>;
+  return<div id="authFormContainer">{isLoginMode?<SignIn toggleMode={toggleMode} signIn={signIn} changeHandler={changeHandler}/>:<SignUp toggleMode={toggleMode} signUp={signUp} changeHandler={changeHandler}/>} </div>
+
+  
 }
 
 export default Authentication;
